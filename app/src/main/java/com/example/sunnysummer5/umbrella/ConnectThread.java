@@ -14,14 +14,16 @@ public class ConnectThread extends Thread {
     private final BluetoothDevice mmDevice;
     private final BluetoothAdapter mBluetoothAdapter;
     private final String mUUID;
+    private String input;
 
-    public ConnectThread(BluetoothAdapter adapter, String uuid) {
+    public ConnectThread(BluetoothAdapter adapter, String uuid, String i) {
         // Use a temporary object that is later assigned to mmSocket,
         // because mmSocket is final
         BluetoothSocket tmp = null;
         mmDevice = adapter.getRemoteDevice(adapter.getAddress());
         mBluetoothAdapter = adapter;
         mUUID = uuid;
+        input = i;
 
         // Get a BluetoothSocket to connect with the given BluetoothDevice
         try {
@@ -33,7 +35,8 @@ public class ConnectThread extends Thread {
 
     public void run() {
         // Cancel discovery because it will slow down the connection
-        mBluetoothAdapter.cancelDiscovery();
+        if(mBluetoothAdapter.isDiscovering())
+            mBluetoothAdapter.cancelDiscovery();
 
         try {
             // Connect the device through the socket. This will block
@@ -58,7 +61,7 @@ public class ConnectThread extends Thread {
         synchronized (ConnectThread.this) {
             ConnectThread.this.cancel();
         }
-        new ConnectedThread(mUUID, mBluetoothAdapter).start();
+        new ConnectedThread(mUUID, mBluetoothAdapter, input).start();
     }
 
     /** Will cancel an in-progress connection, and close the socket */

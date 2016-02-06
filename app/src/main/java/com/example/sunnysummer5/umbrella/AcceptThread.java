@@ -15,12 +15,18 @@ public class AcceptThread extends Thread {
    private final BluetoothServerSocket mmServerSocket;
     private BluetoothAdapter mBluetoothAdapter;
     private static final String TAG = "AcceptThread";
+    private String out = "";
 
     public AcceptThread(BluetoothAdapter adapter, String uuid) {
         // Use a temporary object that is later assigned to mmServerSocket,
         // because mmServerSocket is final
         BluetoothServerSocket tmp = null;
         mBluetoothAdapter = adapter;
+
+        if(mBluetoothAdapter.isDiscovering())
+            mBluetoothAdapter.cancelDiscovery();
+        mBluetoothAdapter.startDiscovery();
+
         try {
             // MY_UUID is the app's UUID string, also used by the client code
             tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("Umbrella", UUID.fromString(uuid));
@@ -42,7 +48,7 @@ public class AcceptThread extends Thread {
             // If a connection was accepted
             if (socket != null) {
                 // Do work to manage the connection (in a separate thread)
-                manageConnectedSocket(socket);
+                read(socket);
                 try {
                     mmServerSocket.close();
                 } catch (IOException e) {
@@ -63,7 +69,7 @@ public class AcceptThread extends Thread {
         } catch (IOException e) { }
     }
 
-    public void manageConnectedSocket(BluetoothSocket socket) {
+    public void read(BluetoothSocket socket) {
         //setup input stream
         InputStream tmpIn = null;
         try {
@@ -81,6 +87,9 @@ public class AcceptThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.e(TAG, total.toString());
+        String out = total.toString();
+    }
+    public String getOut() {
+        return out;
     }
 }

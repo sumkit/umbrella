@@ -16,9 +16,11 @@ public class ConnectedThread extends Thread {
     private InputStream mmInStream = null;
     private OutputStream mmOutStream = null;
     private final String uuid;
+    private String i;
 
-    public ConnectedThread(String u, BluetoothAdapter a) {
+    public ConnectedThread(String u, BluetoothAdapter a, String input) {
         uuid = u;
+        i = input;
         try {
             BluetoothDevice mmDevice = a.getRemoteDevice(a.getAddress());
             mmSocket = mmDevice.createInsecureRfcommSocketToServiceRecord(UUID.fromString(u));
@@ -39,10 +41,7 @@ public class ConnectedThread extends Thread {
             catch (IOException e2) {
                 Log.e("ConnectThread", "IOException when trying to close socket", e2);
             }
-            new AcceptThread(a, uuid).start();
-            return;
         }
-
         mmInStream = tmpIn;
         mmOutStream = tmpOut;
     }
@@ -60,6 +59,10 @@ public class ConnectedThread extends Thread {
                 // Send the obtained bytes to the UI activity
                 mHandler.obtainMessage(0, bytes, -1, buffer)
                         .sendToTarget();
+
+                if(!(i.isEmpty())) {
+                    write(i.getBytes());
+                }
             } catch (IOException e) {
                 break;
             }
