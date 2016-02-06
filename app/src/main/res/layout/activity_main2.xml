@@ -1,0 +1,163 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:baselineAligned="false">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="0dp"
+        android:background="#f9bf3b">
+
+        <Button
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:text="FEED"
+            android:id="@+id/button4"
+            android:layout_marginLeft="93dp"
+            android:layout_marginStart="93dp"
+            android:fontFamily="futura"
+            android:textColor="#Fff"
+            android:background="#f39c12"
+
+            android:layout_alignTop="@+id/button5"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_marginTop="10dp"
+            android:layout_width="90dp"
+            android:layout_height="40dp"
+            android:text="REPORT"
+            android:id="@+id/button5"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/button4"
+            android:layout_toEndOf="@+id/button4"
+            android:fontFamily="futura"
+            android:textColor="#f39c12"
+            android:background="#fff"
+            />
+
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:id="@+id/imageView"
+            android:src="@drawable/umbrella_icon"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <!-- LOGOOOOOO -->
+        <ImageView
+            android:id="@+id/caution"
+            android:src="@drawable/caution"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="23dp"
+            android:layout_below="@+id/button4"
+            android:layout_alignLeft="@+id/button4"
+            android:layout_alignStart="@+id/button4"
+            android:layout_marginLeft="37dp"
+            android:layout_marginStart="29dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="CALL FOR HELP"
+            android:fontFamily="futura"
+            android:textStyle="bold"
+            android:id="@+id/textView"
+            android:layout_below="@+id/caution"
+            android:layout_alignLeft="@+id/caution"
+            android:layout_alignStart="@+id/caution" />
+    </RelativeLayout>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp" tools:context=".MainActivity"
+        android:backgroundTintMode="screen"
+        android:focusable="false"
+        android:background="#F9bf3b"
+        >
+
+
+
+
+        <!-- This View must be placed before any elements from the bottom part -->
+
+
+
+        <View
+            android:id="@+id/bottom_background"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:paddingTop="200dp"
+            android:background="#FFFF"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+
+
+
+        <!-- Now you can place your bottom elements and align them with the to ones -->
+
+        <!-- <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Button"
+            android:id="@+id/button4"
+             /> -->
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SSN"
+            android:id="@+id/button"
+            android:backgroundTint="#36d7b7"
+            android:fontFamily="futura"
+            android:foregroundTint="#3fff37"
+            android:textColor="#FFF"
+            android:width="300dp"
+            android:textSize="20dp"
+            android:height="65dp"
+            android:layout_above="@+id/button2"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CMU Police"
+            android:id="@+id/button2"
+            android:backgroundTint="#67809f"
+            android:fontFamily="futura"
+            android:textColor="#FFF"
+            android:width="300dp"
+            android:textSize="20dp"
+            android:height="65dp"
+            android:layout_above="@+id/button3"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="911"
+            android:id="@+id/button3"
+            android:backgroundTint="#ff5757"
+            android:fontFamily="futura"
+            android:textColor="#FFF"
+            android:width="300dp"
+            android:textSize="20dp"
+            android:height="65dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="70dp" />
+    </RelativeLayout>
+</LinearLayout>

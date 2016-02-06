@@ -6,7 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.location.Location;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
@@ -14,46 +14,109 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 public class Main extends AppCompatActivity {
 
-    private static final int RADIUS = 500;
     private static final String TAG = "MAIN";
-    private CurrentLocation currentLocation;
     private static BluetoothAdapter mBluetoothAdapter;
-    private static TextView temp;
-    private Button button;
     private static HashSet<BluetoothDevice> devices;
+
+    private Button feed, report;
+    private ImageButton next, final3;
+    private EditText hint;
+    private String message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        devices = new HashSet<BluetoothDevice>();
-        temp = (TextView) findViewById(R.id.text);
-        button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
+
+        final List<String> myItems = new ArrayList<String>();
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.layoutlist, myItems);
+        ListView listt = (ListView) findViewById(R.id.listView);
+        listt.setAdapter(adapter);
+
+        if(getIntent().getStringArrayExtra("array") != null) {
+            final String[] S = getIntent().getStringArrayExtra("array");
+            for(int j = 0; j < S.length; j++) {
+                myItems.add(S[j]);
+            }
+        }
+
+        final3 = (ImageButton)findViewById(R.id.final2);
+        final3.setVisibility(View.GONE);
+        report = (Button)findViewById(R.id.button5);
+        feed = (Button)findViewById(R.id.button4);
+        feed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initialBluetooth();
+                feed.setBackgroundColor(Color.WHITE);
+                report.setBackgroundColor(Color.parseColor("#f39c12"));
+                feed.setTextColor(Color.parseColor("#f39c12"));
+                report.setTextColor(Color.WHITE);
+
+
             }
         });
+        report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                feed.setBackgroundColor(Color.parseColor("#f39c12"));
+                report.setBackgroundColor(Color.WHITE);
+                feed.setTextColor(Color.WHITE);
+                report.setTextColor(Color.parseColor("#f39c12"));
+                Intent editScreen = new Intent(getApplicationContext(), Main2Activity.class);
+                editScreen.putExtra("array",myItems.toArray(new String[myItems.size()]));
+                startActivity(editScreen);
 
-        currentLocation = new CurrentLocation(Main.this);
-        if(currentLocation.canGetLocation()) {
-            Location current = currentLocation.getLocation();
-            temp.setText(current.getLatitude() + ", " + current.getLongitude());
-        }
-        else {
-            currentLocation.showSettingsAlert();
-            temp.setText("NO");
-        }
+            }
+        });
+        //after message
+        next = (ImageButton)findViewById(R.id.send);
+        hint = (EditText)findViewById(R.id.search);
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hint.setHint("Type location");
+                message = (hint.getText()).toString();
+                next.setVisibility(View.GONE);
+                final3.setVisibility(View.VISIBLE);
+                hint.getText().clear();
+
+            }
+
+        });
+        //after location
+        final3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final3.setVisibility(View.GONE);
+                next.setVisibility(View.VISIBLE);
+                hint.setHint("Type message");
+                String location = (hint.getText()).toString();
+                hint.getText().clear();
+                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd, HH:mm a");
+                String currentDateandTime = sdf.format(new Date());
+                String subitem = location + ", " + currentDateandTime + "\n" + "\n" + message;
+                myItems.add(0, subitem);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        devices = new HashSet<BluetoothDevice>();
+        initialBluetooth();
     }
 
     @Override
@@ -111,15 +174,9 @@ public class Main extends AppCompatActivity {
             startActivity(discoverable);
             Toast.makeText(this, "Bluetooth not enabled.", Toast.LENGTH_LONG).show();
         }
-        else {
-            temp.setText("blue");
-        }
 
         boolean start = mBluetoothAdapter.startDiscovery();
-        if(start)
-            temp.setText("true");
-        else
-            temp.setText("false");
+
 
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
@@ -128,7 +185,6 @@ public class Main extends AppCompatActivity {
                 if(BluetoothDevice.ACTION_FOUND.equals(action)) {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     String st = device.getName() + " - " + device.getAddress();
-                    Main.temp.setText(Main.temp.getText() + "\n" + st);
                     if(!(device.getAddress().equals(mBluetoothAdapter.getAddress())))
                         devices.add(device);
                 }
@@ -137,9 +193,6 @@ public class Main extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(receiver, filter);
 
-        /*TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        String uuid = tManager.getDeviceId();*/
-        //String uuid = Secure.getString(getApplicationContext().getContentResolver(),Secure.ANDROID_ID);
         TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
         final String tmDevice, tmSerial, androidId;
         tmDevice = "" + tm.getDeviceId();
@@ -150,11 +203,10 @@ public class Main extends AppCompatActivity {
         String uuid = deviceUuid.toString();
         Log.e(TAG, "UUID: "+uuid);
 
-        BluetoothDevice me = mBluetoothAdapter.getRemoteDevice(mBluetoothAdapter.getAddress());
-        ConnectThread connectThread = new ConnectThread(uuid, me);
+        ConnectThread connectThread = new ConnectThread(mBluetoothAdapter, uuid);
         connectThread.start();
-
-        AcceptThread acceptThread = new AcceptThread(mBluetoothAdapter, uuid, this);
-        acceptThread.start();
+//
+//        AcceptThread acceptThread = new AcceptThread(mBluetoothAdapter, uuid);
+//        acceptThread.start();
     }
 }
